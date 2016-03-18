@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--  3600秒重新加載文件 -->
+<Configuration status="WARN" monitorInterval="3600">
+
+    <!-- 使用tomcat启动参数catalina.base作为基础路径, app/runlog -->
+    <properties>
+        <property name="runlog">E:/logs/runlog</property>
+    </properties>
+
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{MM-dd HH:mm:ss} %5p %c{1}\:%L - %m%n"/>
+        </Console>
+
+        <RollingFile name="invokeDetailA" immediateFlush="false" fileName="${runlog}/invoke-detail.log"
+                     filePattern="${runlog}/invoke-detail.log.%i">
+            <PatternLayout>
+                <Pattern>%d{MM-dd HH:mm:ss} %5p %c{1}\:%L - %m%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="500MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="3"/>
+        </RollingFile>
+        <RollingFile name="invokeDetailErrorA" immediateFlush="false" fileName="${runlog}/invoke-detail-error.log"
+                     filePattern="${runlog}/invoke-detail-error.log.%d{yyyy-MM-dd}">
+            <PatternLayout>
+                <Pattern>%d{MM-dd HH:mm:ss} %5p %c{1}\:%L - %m%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+        </RollingFile>
+
+        <RollingFile name="invokeOutlineA" fileName="${runlog}/invoke-outline.log"
+                     filePattern="${runlog}/invoke-outline.log.%d{yyyy-MM-dd}">
+            <PatternLayout>
+                <Pattern>%m%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+        </RollingFile>
+    </Appenders>
+    <!--优先级DEBUG < INFO < WARN < ERROR < FATAL-->
+    <Loggers>
+        <!--   additivity="false" 只希望最低一层的子节点处理,不传递 -->
+        <AsyncLogger name="" level="debug" additivity="false">
+            <AppenderRef ref="invokeDetailA"/>
+        </AsyncLogger>
+        <AsyncLogger name="" level="warn" additivity="false">
+            <AppenderRef ref="invokeDetailErrorA"/>
+        </AsyncLogger>
+        <Logger name="" level="info" additivity="false">
+            <AppenderRef ref="invokeOutlineA"/>
+        </Logger>
+        <Root level="debug">
+            <AppenderRef ref="Console"/>
+        </Root>
+    </Loggers>
+</Configuration>
+<!-- 异步日志调优:1.appender中设置immediateFlush="false"会减少IO但增加日志延迟 -->
+ 
+ 
